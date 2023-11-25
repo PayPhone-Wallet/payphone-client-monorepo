@@ -38,8 +38,14 @@ body {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 3em 2em;
   text-align: center;
+}
+
+/* Default Header Styles */
+h1,
+h2 {
+  margin: 0;
 }
 
 /* Default Button Style */
@@ -47,17 +53,18 @@ button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
-  font-size: 1em;
+  font-size: 0.9em;
   font-weight: 500;
   font-family: inherit;
+  color: var(--green-600);
   background-color: var(--green-100);
-  cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button:hover:not(:disabled) {
+  cursor: pointer;
   border-color: currentColor;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+button:disabled {
+  cursor: not-allowed;
+  filter: grayscale() brightness(0.85);
 }

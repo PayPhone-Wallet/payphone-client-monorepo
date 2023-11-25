@@ -6,6 +6,6 @@
 
 <style>
   #payphone-icon {
-    height: 6em;
+    height: 4em;
   }
 </style>
