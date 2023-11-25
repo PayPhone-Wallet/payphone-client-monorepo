@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { walletBalance } from '../stores'
+  import { appView, walletBalance } from '../stores'
   import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
   import { appChainId } from '../config'
+  import { AppView } from '../types'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {
@@ -10,11 +11,11 @@
   })
 
   const onClickSend = () => {
-    // TODO: change to send view
+    appView.set(AppView.send)
   }
 
   const onClickReceive = () => {
-    // TODO: change to receive view
+    appView.set(AppView.receive)
   }
 </script>
 
