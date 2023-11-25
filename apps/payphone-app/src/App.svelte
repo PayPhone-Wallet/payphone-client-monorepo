@@ -30,5 +30,6 @@
     display: flex;
     flex-direction: column;
     gap: 2em;
+    height: 100%;
   }
 </style>
