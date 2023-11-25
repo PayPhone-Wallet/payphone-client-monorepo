@@ -1,0 +1,9 @@
+{
+  "name": "@payphone-client-monorepo/utilities",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "viem": "^1.19.1"
+  }
+}
