@@ -8,3 +8,10 @@ export enum AppView {
   'send' = 'send',
   'receive' = 'receive'
 }
+
+/**
+ * Chromium PWA install prompt event
+ */
+export interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+}
