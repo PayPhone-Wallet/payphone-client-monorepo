@@ -68,3 +68,10 @@ button:disabled {
   cursor: not-allowed;
   filter: grayscale() brightness(0.85);
 }
+
+/* Default List Styles */
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+}
