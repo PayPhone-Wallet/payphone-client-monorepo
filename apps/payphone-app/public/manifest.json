@@ -1,10 +1,20 @@
 {
   "name": "PayPhone",
+  "short_name": "PayPhone",
   "description": "Cash on crypto rails for everyone",
+  "id": "app.payphone.cash",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#bcf0da",
   "background_color": "#bcf0da",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://app.payphone.cash/manifest.json",
+      "id": "app.payphone.cash"
+    }
+  ],
+  "prefer_related_applications": true,
   "icons": [
     {
       "src": "icon_128.png",
@@ -30,7 +40,7 @@
     {
       "src": "icon.svg",
       "type": "image/svg",
-      "sizes": "128x128 192x192 256x256 512x512"
+      "sizes": "any"
     }
   ]
 }
