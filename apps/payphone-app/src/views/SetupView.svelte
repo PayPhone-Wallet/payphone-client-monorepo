@@ -1,7 +1,7 @@
 <script lang="ts">
   import SetupStepListItem from '../lib/SetupStepListItem.svelte'
 
-  let currentStepId = 1
+  let currentStepId = 0
 
   const setupSteps: string[] = ['Install PayPhone', 'Create wallet', 'Pair with your device']
 </script>
