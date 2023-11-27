@@ -1,7 +1,8 @@
 <script lang="ts">
   import { setupDrawingPrompts } from '../config'
   import SetupStepListItem from '../lib/SetupStepListItem.svelte'
-  import { beforeAppInstallPromptEvent, isAppInstalled } from '../stores'
+  import { appView, beforeAppInstallPromptEvent, isAppInstalled, walletAddress } from '../stores'
+  import { AppView } from '../types'
 
   const setupSteps: string[] = ['Install PayPhone', 'Create wallet', 'Pair with your device']
   const drawingPrompt = setupDrawingPrompts[Math.floor(Math.random() * setupDrawingPrompts.length)]
@@ -9,6 +10,7 @@
 
   $: isInstallButtonEnabled = !$isAppInstalled && !!$beforeAppInstallPromptEvent
   $: $isAppInstalled && currentStepId === 0 && currentStepId++
+  $: $isAppInstalled && $walletAddress && appView.set(AppView.wallet)
 
   const onClickInstallApp = () => {
     if (!!$beforeAppInstallPromptEvent) {
@@ -18,6 +20,12 @@
 
   const onDraw = () => {
     // TODO: get drawing data, check if it is sufficient before moving on to next step
+    currentStepId++
+  }
+
+  const onClickPairDevice = () => {
+    // TODO: prompt user for auth with randomness to generate private key
+    walletAddress.set('0x00')
     currentStepId++
   }
 </script>
@@ -33,9 +41,7 @@
   </div>
   <div class="setup-step-content">
     {#if currentStepId === 0}
-      <button on:click={onClickInstallApp} disabled={!isInstallButtonEnabled}>
-        Install the App
-      </button>
+      <button on:click={onClickInstallApp} disabled={!isInstallButtonEnabled}>Install App</button>
       <p class="install-info">
         <strong>Is the button above disabled?</strong> If so, and your browser has not prompted you to
         install the app, check for an installation icon on the top right or try a different browser.
@@ -52,7 +58,7 @@
         </span>
       </span>
     {:else if currentStepId === 2}
-      <span>step 3 content</span>
+      <button on:click={onClickPairDevice}>Pair Device</button>
     {/if}
   </div>
 </section>

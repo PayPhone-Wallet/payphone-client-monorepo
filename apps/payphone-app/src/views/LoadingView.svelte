@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { appView, isAppInstalled, walletAddress, walletBalance } from '../stores'
+  import { appView, isAppInstalled, walletAddress } from '../stores'
   import { AppView } from '../types'
 
   const loadingChecks = {
@@ -25,10 +25,8 @@
   }
 
   const setAppView = () => {
-    if ($isAppInstalled && !!$walletAddress && !!$walletBalance) {
+    if ($isAppInstalled && !!$walletAddress) {
       appView.set(AppView.wallet)
-    } else if ($isAppInstalled && !!$walletAddress) {
-      appView.set(AppView.receive)
     } else {
       appView.set(AppView.setup)
     }
