@@ -13,6 +13,7 @@
     "@payphone-client-monorepo/types": "workspace:*",
     "@payphone-client-monorepo/utilities": "workspace:*",
     "qr-code-styling": "1.6.0-rc.1",
+    "qr-scanner": "^1.4.2",
     "svelte": "^4.2.3",
     "viem": "^1.19.1"
   },

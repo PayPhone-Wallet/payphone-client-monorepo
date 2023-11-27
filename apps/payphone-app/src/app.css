@@ -75,3 +75,8 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+/* Global Hidden Class */
+.hidden {
+  display: none;
+}

@@ -16,6 +16,7 @@
   }
 </script>
 
+<!-- TODO: add nfc tap functionality -->
 <!-- TODO: add option to set amount to receive -->
 
 <section id="receive-view">

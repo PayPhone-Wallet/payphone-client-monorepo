@@ -6,6 +6,7 @@
   const loadingChecks = {
     install: false
     // wallet: false
+    // balance: false
   }
 
   $: isLoaded = Object.values(loadingChecks).every((state) => state)
@@ -23,6 +24,8 @@
   const checkWallet = () => {
     // TODO: check if a wallet address can be found on the device
   }
+
+  // TODO: check balance if wallet address is found, before completing loading sequence
 
   const setAppView = () => {
     if ($isAppInstalled && !!$walletAddress) {
