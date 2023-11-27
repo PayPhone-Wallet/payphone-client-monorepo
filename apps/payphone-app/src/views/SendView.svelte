@@ -1,19 +1,23 @@
 <script lang="ts">
   import QrScanner from 'qr-scanner'
-  import { onDestroy } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { isAddress, type Address } from 'viem'
   import { appChainId } from '../config'
   import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
   import { appView } from '../stores'
   import { AppView } from '../types'
 
-  let mode: 'qr' | 'nfc' = 'qr'
+  let mode: 'qr' | 'nfc' = 'nfc'
+  let isNfcEnabled = false
+  let isQrEnabled = false
+
   let videoElement: HTMLVideoElement | undefined = undefined
   let isQrScannerActive = false
+
   let txRequest: { address: Address; name?: string; amount?: bigint } | undefined = undefined
 
   $: qrScanner = !!videoElement ? createQrScanner() : undefined
-  $: !!qrScanner && mode === 'qr' && !txRequest && startQrScanner()
+  $: isQrEnabled && !!qrScanner && mode === 'qr' && !txRequest && startQrScanner()
   $: mode === 'nfc' && stopQrScanner()
 
   $: formattedTxAmount = formatPayTokenAmount(appChainId, txRequest?.amount ?? 0n)
@@ -21,6 +25,9 @@
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
+
+  $: isModeSwitchingEnabled = (mode === 'nfc' && isQrEnabled) || (mode === 'qr' && isNfcEnabled)
+  $: otherMode = (mode === 'nfc' ? 'qr' : 'nfc') as typeof mode
 
   const createQrScanner = () => {
     if (!!videoElement) {
@@ -75,13 +82,21 @@
     appView.set(AppView.wallet)
   }
 
+  onMount(async () => {
+    isNfcEnabled = false
+    isQrEnabled = await QrScanner.hasCamera()
+
+    if (!isNfcEnabled && isQrEnabled) {
+      mode = 'qr'
+    }
+  })
+
   onDestroy(() => {
     qrScanner?.destroy()
   })
 </script>
 
 <!-- TODO: add nfc tap functionality (use nfc first if device is compatible) -->
-<!-- TODO: use QrScanner.hasCamera() to determine if qr scanning is possible -->
 
 <section id="send-view">
   {#if !!txRequest}
@@ -107,16 +122,16 @@
     </div>
     <!-- TODO: add cute nfc icon and some small text to tell the user to tap another device -->
   {/if}
-  <div class="mode-buttons">
-    <button on:click={() => (mode = 'nfc')} disabled={mode === 'nfc'}>Tap NFC</button>
-    <button on:click={() => (mode = 'qr')} disabled={mode === 'qr'}>Scan QR</button>
-  </div>
+  <button on:click={() => (mode = otherMode)} disabled={!isModeSwitchingEnabled}>
+    Switch to {otherMode.toUpperCase()}
+  </button>
 </section>
 
 <style>
   #send-view {
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 100%;
     gap: 3em;
   }
