@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { zeroAddress } from 'viem'
   import { setupDrawingPrompts } from '../config'
   import SetupStepListItem from '../lib/SetupStepListItem.svelte'
   import { appView, beforeAppInstallPromptEvent, isAppInstalled, walletAddress } from '../stores'
@@ -25,7 +26,7 @@
 
   const onClickPairDevice = () => {
     // TODO: prompt user for auth with randomness to generate private key
-    walletAddress.set('0x00')
+    walletAddress.set(zeroAddress)
     currentStepId++
   }
 </script>

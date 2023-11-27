@@ -19,6 +19,9 @@ importers:
       prettier-plugin-svelte:
         specifier: ^3.0.3
         version: 3.1.0(prettier@3.1.0)(svelte@4.2.5)
+      qr-code-styling:
+        specifier: 1.6.0-rc.1
+        version: 1.6.0-rc.1
       tslib:
         specifier: ^2.5.0
         version: 2.6.2
@@ -40,6 +43,9 @@ importers:
       '@payphone-client-monorepo/utilities':
         specifier: workspace:*
         version: link:../../shared/utilities
+      qr-code-styling:
+        specifier: 1.6.0-rc.1
+        version: 1.6.0-rc.1
       svelte:
         specifier: ^4.2.3
         version: 4.2.5
@@ -1567,6 +1573,20 @@ packages:
     engines: { node: '>=14' }
     hasBin: true
     dev: true
+
+  /qr-code-styling@1.6.0-rc.1:
+    resolution:
+      {
+        integrity: sha512-ModRIiW6oUnsP18QzrRYZSc/CFKFKIdj7pUs57AEVH20ajlglRpN3HukjHk0UbNMTlKGuaYl7Gt6/O5Gg2NU2Q==
+      }
+    dependencies:
+      qrcode-generator: 1.4.4
+
+  /qrcode-generator@1.4.4:
+    resolution:
+      {
+        integrity: sha512-HM7yY8O2ilqhmULxGMpcHSF1EhJJ9yBj8gvDEuZ6M+KGJ0YY2hKpnXvRD+hZPLrDVck3ExIGhmPtSdcjC+guuw==
+      }
 
   /queue-microtask@1.2.3:
     resolution:
