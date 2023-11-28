@@ -2,7 +2,7 @@
   import QrScanner from 'qr-scanner'
   import { onDestroy, onMount } from 'svelte'
   import { isAddress, type Address } from 'viem'
-  import { appChainId } from '../config'
+  import { appChainId, appUrl } from '../config'
   import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
   import { appView } from '../stores'
   import { AppView } from '../types'
@@ -56,18 +56,20 @@
     if (isAddress(result.data)) {
       txRequest = { address: result.data }
       stopQrScanner()
-    } else {
-      const data: { address?: string; name?: string; amount?: string } = JSON.parse(result.data)
-      if (!!data.address && isAddress(data.address)) {
-        txRequest = {
-          address: data.address,
-          name: data.name,
-          amount: !!data.amount ? BigInt(data.amount) : undefined
-        }
+    } else if (result.data.startsWith(appUrl)) {
+      const url = new URL(result.data)
+      const address = url.searchParams.get('address')
+
+      if (!!address && isAddress(address)) {
+        const name = url.searchParams.get('name') ?? undefined
+        const _amount = url.searchParams.get('amount')
+        const amount = !!_amount ? BigInt(_amount) : undefined
+
+        txRequest = { address, name, amount }
         stopQrScanner()
-      } else {
-        // TODO: display some sort of error message
       }
+    } else {
+      // TODO: display some sort of error message
     }
   }
 
