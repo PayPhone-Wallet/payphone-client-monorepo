@@ -1,31 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { appView, isAppInstalled, walletAddress } from '../stores'
+  import { appView, isAppInstalled, isAppLoaded, walletAddress } from '../stores'
   import { AppView } from '../types'
 
-  const loadingChecks = {
-    install: false
-    // wallet: false
-    // balance: false
-  }
-
-  $: isLoaded = Object.values(loadingChecks).every((state) => state)
+  $: isLoaded =
+    $isAppLoaded.install &&
+    $isAppLoaded.walletAddress &&
+    $isAppLoaded.walletName &&
+    $isAppLoaded.walletSecret &&
+    ((!!$walletAddress && $isAppLoaded.walletBalance) || !$walletAddress)
   $: isLoaded && setAppView()
-
-  const checkAppInstallState = () => {
-    window.addEventListener('DOMContentLoaded', () => {
-      const mediaEvent = window.matchMedia('(display-mode: standalone)')
-      isAppInstalled.set(mediaEvent.matches)
-      mediaEvent.addEventListener('change', (event) => isAppInstalled.set(event.matches))
-      loadingChecks.install = true
-    })
-  }
-
-  const checkWallet = () => {
-    // TODO: check if a wallet address can be found on the device
-  }
-
-  // TODO: check balance if wallet address is found, before completing loading sequence
 
   const setAppView = () => {
     if ($isAppInstalled && !!$walletAddress) {
@@ -35,9 +19,16 @@
     }
   }
 
+  const checkAppInstallState = () => {
+    window.addEventListener('DOMContentLoaded', () => {
+      const mediaEvent = window.matchMedia('(display-mode: standalone)')
+      isAppInstalled.set(mediaEvent.matches)
+      mediaEvent.addEventListener('change', (event) => isAppInstalled.set(event.matches))
+    })
+  }
+
   onMount(() => {
     checkAppInstallState()
-    checkWallet()
   })
 </script>
 

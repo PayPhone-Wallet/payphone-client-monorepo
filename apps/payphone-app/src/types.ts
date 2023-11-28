@@ -10,6 +10,15 @@ export enum AppView {
 }
 
 /**
+ * Local Storage Keys
+ */
+export enum LSKey {
+  'walletSecret' = 'walletSecret',
+  'walletAddress' = 'walletAddress',
+  'walletName' = 'walletName'
+}
+
+/**
  * Chromium PWA install prompt event
  */
 export interface BeforeInstallPromptEvent extends Event {

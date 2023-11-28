@@ -1,21 +1,25 @@
 <script lang="ts">
-  import { zeroAddress } from 'viem'
-  import { setupDrawingPrompts } from '../config'
+  import { toHex } from 'viem'
+  import { appChainId, setupDrawingPrompts } from '../config'
   import SetupStepListItem from '../lib/SetupStepListItem.svelte'
   import { appView, beforeAppInstallPromptEvent, isAppInstalled, walletAddress } from '../stores'
   import { AppView } from '../types'
   import EntropyCanvas from '../lib/EntropyCanvas.svelte'
+  import { getAlchemyProvider } from '@payphone-client-monorepo/utilities'
 
-  const setupSteps: string[] = ['Install PayPhone', 'Create wallet']
+  const setupSteps: string[] = ['Install PayPhone', 'Create Wallet']
   const drawingPrompt = setupDrawingPrompts[Math.floor(Math.random() * setupDrawingPrompts.length)]
   let currentStepId = 0
-  let canvasEntropy = BigInt(0);
-  let sufficientEntropy = false;
+
+  const minPk = BigInt(1)
+  const maxPk = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
+  let canvasEntropy = 0n
 
   $: isInstallButtonEnabled = !$isAppInstalled && !!$beforeAppInstallPromptEvent
   $: $isAppInstalled && currentStepId === 0 && currentStepId++
   $: $isAppInstalled && $walletAddress && appView.set(AppView.wallet)
-  $: checkEntropy(canvasEntropy)
+
+  $: isSufficientEntropy = checkEntropy(canvasEntropy)
 
   const onClickInstallApp = () => {
     if (!!$beforeAppInstallPromptEvent) {
@@ -23,27 +27,30 @@
     }
   }
 
-  const checkEntropy = (entropy: bigint) => {
-    // check if entropy is sufficient before moving on to next step
-    let numZeros = 0;
-    const entropyHex = entropy.toString(16).padStart(64, '0')
-    for (let i = 0; i < entropyHex.length; i++) {
-      if (entropyHex.charAt(i) === "0") numZeros++
-    }
-    // console.log(entropyHex, entropy, numZeros)
-    const minPk = BigInt(1)
-    const maxPk = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
-    if (numZeros < 8 && entropy >= minPk && entropy < maxPk) {
-      sufficientEntropy = true
-      if (currentStepId == 1) currentStepId = 2
+  const onClickCreateWallet = async () => {
+    if (isSufficientEntropy) {
+      const walletSecret = toHex(canvasEntropy)
+
+      // TODO: prompt user for auth to aid in generating a more secure private key than just the secret
+      const alchemyProvider = getAlchemyProvider(
+        appChainId,
+        walletSecret,
+        import.meta.env.VITE_ALCHEMY_API_KEY
+      )
+
+      walletAddress.set(await alchemyProvider.account.getAddress())
     }
   }
 
-  const onClickCreateWallet = () => {
-    // TODO: prompt user for auth with randomness to generate private key
-    // (for now just use entropy as pk)
-    walletAddress.set(zeroAddress)
-    currentStepId++
+  const checkEntropy = (entropy: bigint) => {
+    const entropyHex = entropy.toString(16).padStart(64, '0')
+    let numZeros = 0
+
+    for (let i = 0; i < entropyHex.length; i++) {
+      if (entropyHex.charAt(i) === '0') numZeros++
+    }
+
+    return numZeros < 8 && entropy >= minPk && entropy < maxPk
   }
 </script>
 
@@ -63,7 +70,7 @@
         <strong>Is the button above disabled?</strong> If so, and your browser has not prompted you to
         install the app, check for an installation icon on the top right or try a different browser.
       </p>
-    {:else if currentStepId === 1 || currentStepId === 2}
+    {:else if currentStepId === 1}
       <h2 class="draw-instructions">Draw {drawingPrompt} to create your wallet</h2>
       <EntropyCanvas bind:entropy={canvasEntropy} />
       <span class="draw-info">
@@ -73,8 +80,7 @@
           key for your wallet.
         </span>
       </span>
-      <br>
-      <button on:click={onClickCreateWallet} disabled={!sufficientEntropy}>Create Wallet</button>
+      <button on:click={onClickCreateWallet} disabled={!isSufficientEntropy}>Create Wallet</button>
     {/if}
   </div>
 </section>
@@ -132,6 +138,7 @@
     position: relative;
     display: inline-block;
     text-decoration: underline;
+    margin-bottom: 1em;
   }
 
   .tooltip {

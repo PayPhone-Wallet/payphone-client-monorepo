@@ -1,5 +1,5 @@
 import { appChainId } from './config'
-import { walletAddress, walletBalance } from './stores'
+import { isAppLoaded, walletAddress, walletBalance } from './stores'
 import { getWalletPayTokenBalance } from '@payphone-client-monorepo/utilities'
 import { get } from 'svelte/store'
 
@@ -13,6 +13,11 @@ export const updateWalletBalance = async () => {
   if (!!address) {
     const balance = await getWalletPayTokenBalance(appChainId, address)
     walletBalance.set(balance)
+
+    if (balance !== undefined && !get(isAppLoaded).walletBalance) {
+      isAppLoaded.update((obj) => ({ ...obj, walletBalance: true }))
+    }
+
     return balance
   }
 }
