@@ -6,6 +6,7 @@ export * from './abis/erc20'
 /**
  * Utilities
  */
+export * from './utils/alchemy'
 export * from './utils/formatting'
 export * from './utils/qr'
 export * from './utils/queries'

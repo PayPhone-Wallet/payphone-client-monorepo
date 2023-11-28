@@ -5,6 +5,9 @@
     "dev": "turbo run dev --parallel"
   },
   "devDependencies": {
+    "@alchemy/aa-accounts": "^1.2.0",
+    "@alchemy/aa-alchemy": "^1.2.0",
+    "@alchemy/aa-core": "^1.2.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.0",
     "@types/node": "^20.9.0",
     "prettier": "^3.0.3",

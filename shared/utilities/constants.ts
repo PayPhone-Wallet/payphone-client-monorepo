@@ -1,4 +1,4 @@
-import { Address, createPublicClient, http, PublicClient } from 'viem'
+import { Address, Chain, createPublicClient, http, PublicClient } from 'viem'
 import { base } from 'viem/chains'
 
 /**
@@ -36,11 +36,18 @@ export const PAY_TOKEN: Record<SupportedNetwork, { address: Address; decimals: n
 }
 
 /**
+ * Viem Chains
+ */
+export const VIEM_CHAIN: Record<SupportedNetwork, Chain> = {
+  [NETWORK.base]: base
+}
+
+/**
  * Viem Public Clients
  */
 export const VIEM_PUBLIC_CLIENT: Record<SupportedNetwork, PublicClient> = {
   [NETWORK.base]: createPublicClient({
-    chain: base,
+    chain: VIEM_CHAIN[NETWORK.base],
     transport: http(),
     batch: { multicall: true }
   }) as PublicClient
