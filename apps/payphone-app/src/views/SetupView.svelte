@@ -4,14 +4,18 @@
   import SetupStepListItem from '../lib/SetupStepListItem.svelte'
   import { appView, beforeAppInstallPromptEvent, isAppInstalled, walletAddress } from '../stores'
   import { AppView } from '../types'
+  import EntropyCanvas from '../lib/EntropyCanvas.svelte'
 
-  const setupSteps: string[] = ['Install PayPhone', 'Create wallet', 'Pair with your device']
+  const setupSteps: string[] = ['Install PayPhone', 'Create wallet']
   const drawingPrompt = setupDrawingPrompts[Math.floor(Math.random() * setupDrawingPrompts.length)]
   let currentStepId = 0
+  let canvasEntropy = BigInt(0);
+  let sufficientEntropy = false;
 
   $: isInstallButtonEnabled = !$isAppInstalled && !!$beforeAppInstallPromptEvent
   $: $isAppInstalled && currentStepId === 0 && currentStepId++
   $: $isAppInstalled && $walletAddress && appView.set(AppView.wallet)
+  $: checkEntropy(canvasEntropy)
 
   const onClickInstallApp = () => {
     if (!!$beforeAppInstallPromptEvent) {
@@ -19,13 +23,25 @@
     }
   }
 
-  const onDraw = () => {
-    // TODO: get drawing data, check if it is sufficient before moving on to next step
-    currentStepId++
+  const checkEntropy = (entropy: bigint) => {
+    // check if entropy is sufficient before moving on to next step
+    let numZeros = 0;
+    const entropyHex = entropy.toString(16).padStart(64, '0')
+    for (let i = 0; i < entropyHex.length; i++) {
+      if (entropyHex.charAt(i) === "0") numZeros++
+    }
+    // console.log(entropyHex, entropy, numZeros)
+    const minPk = BigInt(1)
+    const maxPk = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
+    if (numZeros < 8 && entropy >= minPk && entropy < maxPk) {
+      sufficientEntropy = true
+      if (currentStepId == 1) currentStepId = 2
+    }
   }
 
-  const onClickPairDevice = () => {
+  const onClickCreateWallet = () => {
     // TODO: prompt user for auth with randomness to generate private key
+    // (for now just use entropy as pk)
     walletAddress.set(zeroAddress)
     currentStepId++
   }
@@ -47,10 +63,9 @@
         <strong>Is the button above disabled?</strong> If so, and your browser has not prompted you to
         install the app, check for an installation icon on the top right or try a different browser.
       </p>
-    {:else if currentStepId === 1}
+    {:else if currentStepId === 1 || currentStepId === 2}
       <h2 class="draw-instructions">Draw {drawingPrompt} to create your wallet</h2>
-      <!-- TODO: implement drawing functionality -->
-      <div id="draw-canvas" on:click={onDraw} />
+      <EntropyCanvas bind:entropy={canvasEntropy} />
       <span class="draw-info">
         Why {drawingPrompt}?
         <span class="tooltip">
@@ -58,8 +73,8 @@
           key for your wallet.
         </span>
       </span>
-    {:else if currentStepId === 2}
-      <button on:click={onClickPairDevice}>Pair Device</button>
+      <br>
+      <button on:click={onClickCreateWallet} disabled={!sufficientEntropy}>Create Wallet</button>
     {/if}
   </div>
 </section>
@@ -111,14 +126,6 @@
     color: var(--green-700);
     font-size: 1.5em;
     font-weight: 600;
-  }
-
-  #draw-canvas {
-    width: min(40em, 80%);
-    aspect-ratio: 16/9;
-    background-color: var(--green-50);
-    border-radius: 0.5em;
-    margin: 0.75em 0;
   }
 
   .draw-info {
