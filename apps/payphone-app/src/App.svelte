@@ -8,6 +8,7 @@
   import WalletView from './views/WalletView.svelte'
   import SendView from './views/SendView.svelte'
   import ReceiveView from './views/ReceiveView.svelte'
+  import ServiceWorker from './lib/ServiceWorker.svelte'
 
   const appViews: Record<AppView, ComponentType> = {
     [AppView.loading]: LoadingView,
@@ -24,6 +25,8 @@
   {/if}
   <svelte:component this={appViews[$appView]} />
 </main>
+
+<ServiceWorker />
 
 <style>
   main {
