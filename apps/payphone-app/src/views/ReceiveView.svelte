@@ -1,12 +1,19 @@
 <script lang="ts">
   import { createQrCode } from '@payphone-client-monorepo/utilities'
-  import { walletAddress } from '../stores'
+  import { walletAddress, walletName } from '../stores'
+  import type { Address } from 'viem'
+  import { appUrl } from '../config'
 
   let qrCodeElement: HTMLElement | undefined = undefined
   let isQrCodeAppended = false
+  let amountToReceive: number | undefined = undefined
 
-  $: qrCode = !!$walletAddress ? createQrCode($walletAddress) : undefined
+  $: qrCode = $walletAddress
+    ? createQrCode(formatQrCodeData($walletAddress, $walletName))
+    : undefined
   $: !!qrCode && !!qrCodeElement && appendQrCode()
+  $: !!qrCode &&
+    qrCode.update({ data: formatQrCodeData($walletAddress, $walletName, amountToReceive) })
 
   const appendQrCode = () => {
     if (!!qrCode && !isQrCodeAppended && !!qrCodeElement) {
@@ -14,17 +21,30 @@
       isQrCodeAppended = true
     }
   }
+
+  const formatQrCodeData = (address?: Address, name?: string, amount?: number) => {
+    const url = new URL(appUrl)
+
+    !!address && url.searchParams.append('address', address)
+    !!name && url.searchParams.append('name', name)
+    !!amount && url.searchParams.append('amount', amount.toString())
+
+    return url.toString()
+  }
 </script>
 
 <!-- TODO: add nfc tap functionality -->
-<!-- TODO: add option to set amount to receive -->
 
 <section id="receive-view">
   <div id="qr-code" bind:this={qrCodeElement} />
+  <input type="number" bind:value={amountToReceive} min={0} placeholder="Enter a $ amount" />
 </section>
 
 <style>
   #receive-view {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
     height: 100%;
   }
 

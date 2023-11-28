@@ -6,6 +6,11 @@ import { NETWORK } from '@payphone-client-monorepo/utilities'
 export const appChainId = NETWORK.base
 
 /**
+ * App URL
+ */
+export const appUrl = 'https://testnet.payphone.cash'
+
+/**
  * Possible Setup Drawing Prompts
  */
 export const setupDrawingPrompts: string[] = [

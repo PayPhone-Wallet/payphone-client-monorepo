@@ -21,7 +21,7 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Color Scheme */
-  color-scheme: dark;
+  color-scheme: light;
   color: var(--green-600);
   background-color: var(--green-200);
 }
