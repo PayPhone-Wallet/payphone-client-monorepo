@@ -2,7 +2,13 @@
   import { toHex } from 'viem'
   import { appChainId, setupDrawingPrompts } from '../config'
   import SetupStepListItem from '../lib/SetupStepListItem.svelte'
-  import { appView, beforeAppInstallPromptEvent, isAppInstalled, walletAddress } from '../stores'
+  import {
+    appView,
+    beforeAppInstallPromptEvent,
+    isAppInstalled,
+    walletAddress,
+    walletSecret
+  } from '../stores'
   import { AppView } from '../types'
   import EntropyCanvas from '../lib/EntropyCanvas.svelte'
   import { getAlchemyProvider } from '@payphone-client-monorepo/utilities'
@@ -10,6 +16,7 @@
   const setupSteps: string[] = ['Install PayPhone', 'Create Wallet']
   const drawingPrompt = setupDrawingPrompts[Math.floor(Math.random() * setupDrawingPrompts.length)]
   let currentStepId = 0
+  let isCreatingWallet = false
 
   const minPk = BigInt(1)
   const maxPk = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
@@ -29,16 +36,19 @@
 
   const onClickCreateWallet = async () => {
     if (isSufficientEntropy) {
-      const walletSecret = toHex(canvasEntropy)
+      isCreatingWallet = true
+      const randomSecret = toHex(canvasEntropy)
+      walletSecret.set(randomSecret)
 
       // TODO: prompt user for auth to aid in generating a more secure private key than just the secret
       const alchemyProvider = getAlchemyProvider(
         appChainId,
-        walletSecret,
+        randomSecret,
         import.meta.env.VITE_ALCHEMY_API_KEY
       )
 
       walletAddress.set(await alchemyProvider.account.getAddress())
+      isCreatingWallet = false
     }
   }
 
@@ -80,7 +90,14 @@
           key for your wallet.
         </span>
       </span>
-      <button on:click={onClickCreateWallet} disabled={!isSufficientEntropy}>Create Wallet</button>
+      <button on:click={onClickCreateWallet} disabled={!isSufficientEntropy || isCreatingWallet}>
+        {#if isCreatingWallet}
+          <!-- TODO: add spinner or other loading indicator instead of text -->
+          Creating Wallet...
+        {:else}
+          Create Wallet
+        {/if}
+      </button>
     {/if}
   </div>
 </section>

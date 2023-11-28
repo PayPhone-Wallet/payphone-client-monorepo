@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  export let entropy = BigInt(0)
+  export let entropy = 0n
 
   const strokeWidth = 5
   const smoothing = 0.5
@@ -82,6 +82,8 @@
     }
   })
 </script>
+
+<!-- TODO: need delete/erase button to restart drawing (make sure to set entropy to 0n) -->
 
 <div id="canvas-container">
   <canvas
