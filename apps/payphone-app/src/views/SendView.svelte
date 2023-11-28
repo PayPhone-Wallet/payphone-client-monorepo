@@ -119,12 +119,12 @@
     <div class="tx-request-info">
       {#if !!txRequest.amount}
         <span class="tx-request-name">
-          {txRequest.name ?? `User ${txRequest.address.slice(2, 8)}`} is requesting
+          {txRequest.name ?? `User ${txRequest.address.slice(2, 6)}`} is requesting
         </span>
         <span class="tx-request-amount">${prettifiedTxAmount}</span>
       {:else}
         <span class="tx-request-name">
-          How much to send to {txRequest.name ?? `User ${txRequest.address.slice(2, 8)}`}?
+          How much to send to {txRequest.name ?? `User ${txRequest.address.slice(2, 6)}`}?
         </span>
         <!-- TODO: need validation for this value -->
         <input

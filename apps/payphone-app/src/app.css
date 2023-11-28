@@ -78,5 +78,5 @@ ul {
 
 /* Global Hidden Class */
 .hidden {
-  display: none;
+  display: none !important;
 }

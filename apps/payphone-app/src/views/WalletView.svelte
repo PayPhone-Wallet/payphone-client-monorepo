@@ -3,6 +3,7 @@
   import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
   import { appChainId } from '../config'
   import { AppView } from '../types'
+  import EditableWalletName from '../lib/EditableWalletName.svelte'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {
@@ -22,8 +23,7 @@
 <section id="wallet-view">
   <div class="header">
     <h1>${prettifiedWalletBalance}</h1>
-    <!-- TODO: allow for editing this name -->
-    <h2>Vitalik B.</h2>
+    <EditableWalletName />
   </div>
   <div class="buttons">
     <button on:click={onClickSend} disabled={!$walletBalance}>Send</button>
@@ -35,6 +35,7 @@
   #wallet-view {
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 100%;
     gap: 3em;
   }
@@ -47,11 +48,6 @@
 
   .header > h1 {
     font-size: 2.25em;
-  }
-
-  .header > h2 {
-    font-size: 0.9em;
-    font-weight: 500;
   }
 
   .buttons {
