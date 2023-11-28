@@ -1,4 +1,4 @@
-import { erc20ABI, SupportedNetwork, VIEM_CHAIN } from '..'
+import { erc20ABI, PAY_TOKEN, SupportedNetwork, VIEM_CHAIN } from '..'
 import {
   getDefaultLightAccountFactoryAddress,
   LightSmartContractAccount
@@ -63,7 +63,8 @@ export const sendTransferPayTokenUserOperation = async (
     account: LightSmartContractAccount<HttpTransport>
   }
 ) => {
-  const target = await alchemyProvider.account.getAddress()
+  const chainId = await alchemyProvider.rpcClient.getChainId()
+  const target = PAY_TOKEN[chainId as SupportedNetwork].address
 
   const data = encodeFunctionData({
     abi: erc20ABI,

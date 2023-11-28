@@ -4,13 +4,13 @@
   import { isAddress, type Address } from 'viem'
   import { appChainId, appUrl } from '../config'
   import {
-    formatPayTokenAmount,
     getAlchemyProvider,
     parsePayTokenAmount,
     sendTransferPayTokenUserOperation
   } from '@payphone-client-monorepo/utilities'
-  import { appView } from '../stores'
+  import { appView, walletBalance, walletSecret } from '../stores'
   import { AppView } from '../types'
+  import { updateWalletBalance } from '../utils'
 
   let mode: 'qr' | 'nfc' = 'nfc'
   let isNfcEnabled = false
@@ -81,14 +81,21 @@
   const onClickSend = async () => {
     if (!!txRequest) {
       const amount = txRequest.amount ?? customAmountToSend
+      const rawAmount = !!amount ? parsePayTokenAmount(appChainId, amount) : 0n
 
-      if (!!amount) {
-        const rawAmount = parsePayTokenAmount(appChainId, amount)
-        // TODO: get wallet private key
+      if (!!rawAmount && !!$walletBalance && $walletBalance > rawAmount) {
+        const alchemyProvider = getAlchemyProvider(
+          appChainId,
+          $walletSecret as `0x${string}`,
+          import.meta.env.VITE_ALCHEMY_API_KEY
+        )
+        const txHash = await sendTransferPayTokenUserOperation(
+          txRequest.address,
+          rawAmount,
+          alchemyProvider
+        )
 
-        // const alchemyProvider = getAlchemyProvider(appChainId, privateKey, import.meta.env.VITE_ALCHEMY_API_KEY)
-        // const txHash = await sendTransferPayTokenUserOperation(txRequest.address, rawAmount, alchemyProvider)
-
+        await updateWalletBalance()
         // TODO: show some success/fail screen
       }
     }
@@ -135,6 +142,7 @@
         />
       {/if}
     </div>
+    <!-- TODO: need to show warning if amount to send is higher than wallet balance -->
     <div class="tx-request-buttons">
       <button on:click={onClickSend} disabled={!txRequest.amount}>Send</button>
       <button on:click={onClickCancel}>Cancel</button>
