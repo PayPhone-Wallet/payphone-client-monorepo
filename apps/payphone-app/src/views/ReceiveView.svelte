@@ -37,7 +37,8 @@
 
 <section id="receive-view">
   <div id="qr-code" bind:this={qrCodeElement} />
-  <input type="number" bind:value={amountToReceive} min={0} placeholder="Enter a $ amount" />
+  <!-- TODO: need validation for this value -->
+  <input type="number" bind:value={amountToReceive} min={1} placeholder="Enter a $ amount" />
 </section>
 
 <style>

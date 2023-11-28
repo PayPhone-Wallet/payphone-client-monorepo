@@ -3,7 +3,12 @@
   import { onDestroy, onMount } from 'svelte'
   import { isAddress, type Address } from 'viem'
   import { appChainId, appUrl } from '../config'
-  import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
+  import {
+    formatPayTokenAmount,
+    getAlchemyProvider,
+    parsePayTokenAmount,
+    sendTransferPayTokenUserOperation
+  } from '@payphone-client-monorepo/utilities'
   import { appView } from '../stores'
   import { AppView } from '../types'
 
@@ -14,14 +19,14 @@
   let videoElement: HTMLVideoElement | undefined = undefined
   let isQrScannerActive = false
 
-  let txRequest: { address: Address; name?: string; amount?: bigint } | undefined = undefined
+  let txRequest: { address: Address; name?: string; amount?: number } | undefined = undefined
+  let customAmountToSend: number | undefined = undefined
 
   $: qrScanner = !!videoElement ? createQrScanner() : undefined
   $: isQrEnabled && !!qrScanner && mode === 'qr' && !txRequest && startQrScanner()
   $: mode === 'nfc' && stopQrScanner()
 
-  $: formattedTxAmount = formatPayTokenAmount(appChainId, txRequest?.amount ?? 0n)
-  $: prettifiedTxAmount = formattedTxAmount.toLocaleString(undefined, {
+  $: prettifiedTxAmount = txRequest?.amount?.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
@@ -63,7 +68,7 @@
       if (!!address && isAddress(address)) {
         const name = url.searchParams.get('name') ?? undefined
         const _amount = url.searchParams.get('amount')
-        const amount = !!_amount ? BigInt(_amount) : undefined
+        const amount = !!_amount ? parseFloat(_amount) : undefined
 
         txRequest = { address, name, amount }
         stopQrScanner()
@@ -74,9 +79,18 @@
   }
 
   const onClickSend = async () => {
-    if (!!txRequest && !!txRequest.amount) {
-      // TODO: ask for signature and send tx through gas api
-      // TODO: show some success/fail screen
+    if (!!txRequest) {
+      const amount = txRequest.amount ?? customAmountToSend
+
+      if (!!amount) {
+        const rawAmount = parsePayTokenAmount(appChainId, amount)
+        // TODO: get wallet private key
+
+        // const alchemyProvider = getAlchemyProvider(appChainId, privateKey, import.meta.env.VITE_ALCHEMY_API_KEY)
+        // const txHash = await sendTransferPayTokenUserOperation(txRequest.address, rawAmount, alchemyProvider)
+
+        // TODO: show some success/fail screen
+      }
     }
   }
 
@@ -109,7 +123,16 @@
         </span>
         <span class="tx-request-amount">${prettifiedTxAmount}</span>
       {:else}
-        <!-- TODO: prompt the user to enter an amount -->
+        <span class="tx-request-name">
+          How much to send to {txRequest.name ?? `User ${txRequest.address.slice(2, 8)}`}?
+        </span>
+        <!-- TODO: need validation for this value -->
+        <input
+          type="number"
+          bind:value={customAmountToSend}
+          min={1}
+          placeholder="Enter a $ amount"
+        />
       {/if}
     </div>
     <div class="tx-request-buttons">
@@ -123,10 +146,10 @@
       <video id="camera-video" bind:this={videoElement} />
     </div>
     <!-- TODO: add cute nfc icon and some small text to tell the user to tap another device -->
+    <button on:click={() => (mode = otherMode)} disabled={!isModeSwitchingEnabled}>
+      Switch to {otherMode.toUpperCase()}
+    </button>
   {/if}
-  <button on:click={() => (mode = otherMode)} disabled={!isModeSwitchingEnabled}>
-    Switch to {otherMode.toUpperCase()}
-  </button>
 </section>
 
 <style>
