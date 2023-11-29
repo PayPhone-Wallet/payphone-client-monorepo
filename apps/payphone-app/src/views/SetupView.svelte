@@ -23,12 +23,13 @@
   const minPk = BigInt(1)
   const maxPk = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141')
   let canvasEntropy = 0n
+  let validEntropy = 0n;
 
   $: isInstallButtonEnabled = !$isAppInstalled && !!$beforeAppInstallPromptEvent
   $: $isAppInstalled && currentStepId === 0 && currentStepId++
   $: $isAppInstalled && $walletAddress && appView.set(AppView.naming)
 
-  $: isSufficientEntropy = checkEntropy(canvasEntropy)
+  $: checkEntropy(canvasEntropy)
 
   const onClickInstallApp = () => {
     if (!!$beforeAppInstallPromptEvent) {
@@ -37,9 +38,9 @@
   }
 
   const onClickCreateWallet = async () => {
-    if (isSufficientEntropy) {
+    if (validEntropy) {
       isCreatingWallet = true
-      const randomSecret = toHex(canvasEntropy)
+      const randomSecret = toHex(validEntropy)
       walletSecret.set(randomSecret)
 
       // TODO: prompt user for auth to aid in generating a more secure private key than just the secret
@@ -66,7 +67,9 @@
       if (entropyHex.charAt(i) === '0') numZeros++
     }
 
-    return numZeros < 8 && entropy >= minPk && entropy < maxPk
+    if (numZeros < 8 && entropy >= minPk && entropy < maxPk) {
+      validEntropy = entropy;
+    }
   }
 </script>
 
@@ -97,7 +100,7 @@
           key for your wallet.
         </span>
       </span>
-      <button on:click={onClickCreateWallet} disabled={!isSufficientEntropy || isCreatingWallet}>
+      <button on:click={onClickCreateWallet} disabled={!validEntropy || isCreatingWallet}>
         {#if isCreatingWallet}
           <!-- TODO: add spinner or other loading indicator instead of text -->
           Creating Wallet...
