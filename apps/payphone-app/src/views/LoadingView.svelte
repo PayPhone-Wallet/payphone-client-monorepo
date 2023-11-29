@@ -1,7 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { appView, isAppInstalled, isAppLoaded, walletAddress } from '../stores'
+  import {
+    appView,
+    beforeAppInstallPromptEvent,
+    isAppInstalled,
+    isAppLoaded,
+    walletAddress
+  } from '../stores'
   import { AppView } from '../types'
+
+  // TODO: find out why this is necessary to prevent the event from not firing on launch while walletAddress is set
+  $: $beforeAppInstallPromptEvent
 
   $: isLoaded =
     $isAppLoaded.install &&
