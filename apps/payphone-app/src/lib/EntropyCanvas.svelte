@@ -103,7 +103,7 @@
     width: min(40em, 80%);
     aspect-ratio: 16/9;
     background-color: var(--green-50);
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
     margin: 0.75em 0;
     overflow: hidden;
   }

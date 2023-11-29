@@ -111,18 +111,18 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    gap: 2.5em;
+    gap: 2.5rem;
   }
 
   .setup-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2.5em;
+    gap: 2.5rem;
   }
 
   .setup-header > h1 {
-    font-size: 1.8em;
+    font-size: 1.8rem;
   }
 
   .setup-header > ol {
@@ -141,7 +141,7 @@
 
   .install-info {
     max-width: min(40em, 80%);
-    font-size: 0.8em;
+    font-size: 0.8rem;
     opacity: 0.8;
   }
 
@@ -150,8 +150,7 @@
   }
 
   .draw-instructions {
-    color: var(--green-700);
-    font-size: 1.5em;
+    font-size: 1.5rem;
     font-weight: 600;
   }
 
@@ -159,33 +158,32 @@
     position: relative;
     display: inline-block;
     text-decoration: underline;
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
   }
 
   .tooltip {
     --width: min(35em, 55vw);
-    --padding-x: 1em;
+    --padding-x: 1rem;
     position: absolute;
     bottom: 100%;
     left: 50%;
     visibility: hidden;
     width: var(--width);
-    margin-bottom: 0.5em;
-    margin-left: calc(0em - var(--padding-x) - var(--width) / 2);
-    padding: 0.5em var(--padding-x);
-    color: var(--green-700);
+    margin-bottom: 0.5rem;
+    margin-left: calc(0rem - var(--padding-x) - var(--width) / 2);
+    padding: 0.5rem var(--padding-x);
     background-color: var(--green-400);
-    border-radius: 0.4em;
-    font-size: 0.9em;
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
   }
 
   .tooltip::after {
-    --arrow-size: 0.5em;
+    --arrow-size: 0.5rem;
     content: '';
     position: absolute;
     top: 100%;
     left: 50%;
-    margin-left: calc(0em - var(--arrow-size));
+    margin-left: calc(0rem - var(--arrow-size));
     border-width: var(--arrow-size);
     border-style: solid;
     border-color: var(--green-400) transparent transparent transparent;

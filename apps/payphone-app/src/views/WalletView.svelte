@@ -1,16 +1,15 @@
 <script lang="ts">
-  import { appView, walletAddress, walletBalance, walletName } from '../stores'
+  import { appView, walletBalance } from '../stores'
   import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
   import { appChainId } from '../config'
   import { AppView } from '../types'
+  import Navbar from '../lib/Navbar.svelte'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
-
-  $: fallbackWalletName = `User ${$walletAddress?.slice(2, 6) ?? '?'}`
 
   const onClickSend = () => {
     appView.set(AppView.send)
@@ -22,9 +21,10 @@
 </script>
 
 <section id="wallet-view">
+  <Navbar />
   <div class="header">
-    <h1>${prettifiedWalletBalance}</h1>
-    <span>{$walletName ?? fallbackWalletName}</span>
+    <h1>Your Balance</h1>
+    <span>${prettifiedWalletBalance}</span>
   </div>
   <div class="buttons">
     <button on:click={onClickSend} disabled={!$walletBalance}>Send</button>
@@ -38,21 +38,31 @@
     flex-direction: column;
     align-items: center;
     height: 100%;
-    gap: 3em;
+    gap: 3rem;
   }
 
   .header {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 33%;
   }
 
   .header > h1 {
-    font-size: 2.25em;
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+
+  .header > span {
+    font-size: 1.9rem;
+    font-weight: 700;
   }
 
   .buttons {
     display: flex;
-    gap: 1em;
+    gap: 1rem;
+    margin-top: auto;
+    margin-bottom: 1rem;
   }
 </style>

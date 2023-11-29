@@ -26,11 +26,11 @@
 
   li > span {
     display: flex;
-    gap: 0.5em;
+    gap: 0.5rem;
   }
 
   i.icofont-check {
-    font-size: 1.5em;
+    font-size: 1.5rem;
     opacity: 0;
   }
 

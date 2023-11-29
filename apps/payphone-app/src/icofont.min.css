@@ -31,8 +31,11 @@
 .icofont-check:before {
   content: '\eed8';
 }
-.icofont-pencil-alt-2:before {
-  content: '\ebf6';
+.icofont-gear:before {
+  content: '\ef3a';
+}
+.icofont-arrow-left:before {
+  content: '\ea5c';
 }
 [class*=' icofont-'].icofont-duotone,
 [class^='icofont-'].icofont-duotone {

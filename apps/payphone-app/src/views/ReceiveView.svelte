@@ -1,8 +1,10 @@
 <script lang="ts">
   import { createQrCode } from '@payphone-client-monorepo/utilities'
-  import { walletAddress, walletName } from '../stores'
+  import { appView, walletAddress, walletName } from '../stores'
   import type { Address } from 'viem'
   import { appUrl } from '../config'
+  import Navbar from '../lib/Navbar.svelte'
+  import { AppView } from '../types'
 
   let qrCodeElement: HTMLElement | undefined = undefined
   let isQrCodeAppended = false
@@ -31,26 +33,54 @@
 
     return url.toString()
   }
+
+  const onClickBack = () => {
+    appView.set(AppView.wallet)
+  }
 </script>
 
 <!-- TODO: add nfc tap functionality -->
 
 <section id="receive-view">
-  <div id="qr-code" bind:this={qrCodeElement} />
-  <!-- TODO: need validation for this value -->
-  <input type="number" bind:value={amountToReceive} min={1} placeholder="Enter a $ amount" />
+  <Navbar />
+  <div class="content-wrapper">
+    <div id="qr-code" bind:this={qrCodeElement} />
+    <!-- TODO: need validation for this value -->
+    <input type="number" bind:value={amountToReceive} min={1} placeholder="Enter a $ amount" />
+  </div>
+  <button on:click={onClickBack}><i class="icofont-arrow-left" /> Back</button>
 </section>
 
 <style>
   #receive-view {
     display: flex;
     flex-direction: column;
-    gap: 2em;
+    align-items: center;
+    gap: 2rem;
     height: 100%;
   }
 
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    height: 66%;
+  }
+
   #qr-code {
-    border-radius: 1em;
+    aspect-ratio: 1;
+    border-radius: 1rem;
     overflow: hidden;
+  }
+
+  input {
+    width: calc(300px - 1rem);
+  }
+
+  button {
+    margin-top: auto;
+    margin-bottom: 1rem;
   }
 </style>
