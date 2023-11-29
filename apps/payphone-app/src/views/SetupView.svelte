@@ -11,8 +11,9 @@
   } from '../stores'
   import { AppView } from '../types'
   import EntropyCanvas from '../lib/EntropyCanvas.svelte'
-  import { getAlchemyProvider } from '@payphone-client-monorepo/utilities'
+  import { getAlchemyProvider, parsePayTokenAmount } from '@payphone-client-monorepo/utilities'
   import Icon from '../lib/Icon.svelte'
+  import { sendMintUserOperation } from '../utils'
 
   const setupSteps: string[] = ['Install PayPhone', 'Create Wallet']
   const drawingPrompt = setupDrawingPrompts[Math.floor(Math.random() * setupDrawingPrompts.length)]
@@ -48,6 +49,9 @@
         import.meta.env.VITE_ALCHEMY_API_KEY,
         import.meta.env.VITE_ALCHEMY_GAS_POLICY_ID
       )
+
+      // TODO: remove this after not on testnet anymore
+      await sendMintUserOperation(parsePayTokenAmount(appChainId, 100), randomSecret)
 
       walletAddress.set(await alchemyProvider.account.getAddress())
       isCreatingWallet = false
