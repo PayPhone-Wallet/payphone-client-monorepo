@@ -45,7 +45,8 @@
       const alchemyProvider = getAlchemyProvider(
         appChainId,
         randomSecret,
-        import.meta.env.VITE_ALCHEMY_API_KEY
+        import.meta.env.VITE_ALCHEMY_API_KEY,
+        import.meta.env.VITE_ALCHEMY_GAS_POLICY_ID
       )
 
       walletAddress.set(await alchemyProvider.account.getAddress())

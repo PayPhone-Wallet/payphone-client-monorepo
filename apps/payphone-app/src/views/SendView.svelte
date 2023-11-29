@@ -89,7 +89,8 @@
       const alchemyProvider = getAlchemyProvider(
         appChainId,
         $walletSecret as `0x${string}`,
-        import.meta.env.VITE_ALCHEMY_API_KEY
+        import.meta.env.VITE_ALCHEMY_API_KEY,
+        import.meta.env.VITE_ALCHEMY_GAS_POLICY_ID
       )
 
       // TODO: show some "sending" screen

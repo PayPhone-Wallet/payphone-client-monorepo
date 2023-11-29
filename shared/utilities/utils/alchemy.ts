@@ -17,15 +17,20 @@ import { Address, encodeFunctionData, HttpTransport } from 'viem'
 export const getAlchemyProvider = (
   chainId: SupportedNetwork,
   privateKey: `0x${string}`,
-  apiKey: string
+  apiKey: string,
+  gasPolicyId: string
 ) => {
   const chain = VIEM_CHAIN[chainId]
   const owner = LocalAccountSigner.privateKeyToAccountSigner(privateKey)
   const factoryAddress = getDefaultLightAccountFactoryAddress(chain)
 
-  return new AlchemyProvider({ apiKey, chain }).connect(
+  const alchemyProvider = new AlchemyProvider({ apiKey, chain }).connect(
     (rpcClient) => new LightSmartContractAccount({ rpcClient, owner, chain, factoryAddress })
   )
+
+  alchemyProvider.withAlchemyGasManager({ policyId: gasPolicyId })
+
+  return alchemyProvider
 }
 
 /**
