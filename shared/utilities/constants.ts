@@ -1,5 +1,5 @@
 import { Address, Chain, createPublicClient, http, PublicClient } from 'viem'
-import { base } from 'viem/chains'
+import { baseGoerli } from 'viem/chains'
 
 /**
  * Network IDs
@@ -22,16 +22,16 @@ export enum NETWORK {
 /**
  * Supported Networks
  */
-export const SUPPORTED_NETWORKS = [NETWORK.base] as const
+export const SUPPORTED_NETWORKS = [NETWORK['base-goerli']] as const
 export type SupportedNetwork = (typeof SUPPORTED_NETWORKS)[number]
 
 /**
  * Pay Tokens
  */
 export const PAY_TOKEN: Record<SupportedNetwork, { address: Address; decimals: number }> = {
-  [NETWORK.base]: {
-    address: '0x0a1d576f3eFeF75b330424287a95A366e8281D54',
-    decimals: 6
+  [NETWORK['base-goerli']]: {
+    address: '0x5927b63E88764D6250b7801eBfDEb7B6c1ac35d0',
+    decimals: 18
   }
 }
 
@@ -39,15 +39,15 @@ export const PAY_TOKEN: Record<SupportedNetwork, { address: Address; decimals: n
  * Viem Chains
  */
 export const VIEM_CHAIN: Record<SupportedNetwork, Chain> = {
-  [NETWORK.base]: base
+  [NETWORK['base-goerli']]: baseGoerli
 }
 
 /**
  * Viem Public Clients
  */
 export const VIEM_PUBLIC_CLIENT: Record<SupportedNetwork, PublicClient> = {
-  [NETWORK.base]: createPublicClient({
-    chain: VIEM_CHAIN[NETWORK.base],
+  [NETWORK['base-goerli']]: createPublicClient({
+    chain: VIEM_CHAIN[NETWORK['base-goerli']],
     transport: http(),
     batch: { multicall: true }
   }) as PublicClient

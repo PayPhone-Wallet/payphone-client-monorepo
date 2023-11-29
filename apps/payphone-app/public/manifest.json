@@ -2,7 +2,7 @@
   "name": "PayPhone",
   "short_name": "PayPhone",
   "description": "Cash on crypto rails for everyone",
-  "id": "testnet.payphone.cash",
+  "id": "test.payphone.cash",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#bcf0da",
@@ -10,8 +10,8 @@
   "related_applications": [
     {
       "platform": "webapp",
-      "url": "https://testnet.payphone.cash/manifest.json",
-      "id": "testnet.payphone.cash"
+      "url": "https://test.payphone.cash/manifest.json",
+      "id": "test.payphone.cash"
     }
   ],
   "prefer_related_applications": true,

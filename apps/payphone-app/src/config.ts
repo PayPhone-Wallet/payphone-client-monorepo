@@ -3,12 +3,12 @@ import { NETWORK } from '@payphone-client-monorepo/utilities'
 /**
  * App's Network
  */
-export const appChainId = NETWORK.base
+export const appChainId = NETWORK['base-goerli']
 
 /**
  * App URL
  */
-export const appUrl = 'https://testnet.payphone.cash'
+export const appUrl = 'https://test.payphone.cash'
 
 /**
  * Possible Setup Drawing Prompts
