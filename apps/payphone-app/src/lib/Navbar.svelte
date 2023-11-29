@@ -3,8 +3,12 @@
   import { AppView } from '../types'
   import Icon from './Icon.svelte'
 
+  export let isSettingsDisabled = false
+
   const onClickSettings = () => {
-    appView.set(AppView.naming)
+    if (!isSettingsDisabled) {
+      appView.set(AppView.naming)
+    }
   }
 </script>
 

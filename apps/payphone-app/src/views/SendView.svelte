@@ -22,6 +22,7 @@
 
   let txRequest: { address: Address; name?: string; amount?: number } | undefined = undefined
   let customAmountToSend: number | undefined = undefined
+  let isSendingTx = false
 
   $: qrScanner = !!videoElement ? createQrScanner() : undefined
   $: isQrEnabled && !!qrScanner && mode === 'qr' && !txRequest && startQrScanner()
@@ -86,6 +87,8 @@
 
   const onClickSend = async () => {
     if (!!txRequest && !!rawTxAmount && isValidTxAmount) {
+      isSendingTx = true
+
       const alchemyProvider = getAlchemyProvider(
         appChainId,
         $walletSecret as `0x${string}`,
@@ -104,6 +107,9 @@
       await updateWalletBalance()
 
       // TODO: show some "success" or "fail" screen
+      appView.set(AppView.wallet)
+
+      isSendingTx = false
     }
   }
 
@@ -124,7 +130,7 @@
 <!-- TODO: add nfc tap functionality (use nfc first if device is compatible) -->
 
 <section id="send-view">
-  <Navbar />
+  <Navbar isSettingsDisabled={isSendingTx} />
   {#if !!txRequest}
     <div class="content-wrapper">
       <div class="tx-request-info">
@@ -149,10 +155,16 @@
       </div>
       <!-- TODO: need to show warning if amount to send is higher than wallet balance -->
       <div class="tx-request-buttons">
-        <button on:click={() => (txRequest = undefined)}
-          ><i class="icofont-arrow-left" /> Back</button
-        >
-        <button on:click={onClickSend} disabled={!isValidTxAmount}>Send</button>
+        <button on:click={() => (txRequest = undefined)} disabled={isSendingTx}>
+          <i class="icofont-arrow-left" /> Back
+        </button>
+        <button on:click={onClickSend} disabled={!isValidTxAmount || isSendingTx}>
+          {#if isSendingTx}
+            Sending...
+          {:else}
+            Send
+          {/if}
+        </button>
       </div>
     </div>
   {:else}
@@ -165,9 +177,9 @@
       <!-- TODO: add cute nfc icon and some small text to tell the user to tap another device -->
     </div>
     <div class="buttons">
-      <button on:click={() => appView.set(AppView.wallet)}
-        ><i class="icofont-arrow-left" /> Back</button
-      >
+      <button on:click={() => appView.set(AppView.wallet)}>
+        <i class="icofont-arrow-left" /> Back
+      </button>
       <button on:click={() => (mode = otherMode)} disabled={!isModeSwitchingEnabled}>
         Switch to {otherMode.toUpperCase()}
       </button>
