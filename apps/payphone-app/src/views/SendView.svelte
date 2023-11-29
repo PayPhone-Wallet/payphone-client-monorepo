@@ -9,7 +9,7 @@
     sendTransferPayTokenUserOperation
   } from '@payphone-client-monorepo/utilities'
   import { appView, walletBalance, walletSecret } from '../stores'
-  import { AppView } from '../types'
+  import { AppView, NDEFReader } from '../types'
   import { updateWalletBalance } from '../utils'
   import Navbar from '../lib/Navbar.svelte'
 
@@ -23,6 +23,9 @@
   let txRequest: { address: Address; name?: string; amount?: number } | undefined = undefined
   let customAmountToSend: number | undefined = undefined
   let isSendingTx = false
+
+  $: nfcReader = isNfcEnabled ? (new (window as any).NDEFReader() as NDEFReader) : undefined
+  $: !!nfcReader && isNfcEnabled && mode === 'nfc' && !txRequest && startNfcScanning()
 
   $: qrScanner = !!videoElement ? createQrScanner() : undefined
   $: isQrEnabled && !!qrScanner && mode === 'qr' && !txRequest && startQrScanner()
@@ -40,6 +43,36 @@
 
   $: isModeSwitchingEnabled = (mode === 'nfc' && isQrEnabled) || (mode === 'qr' && isNfcEnabled)
   $: otherMode = (mode === 'nfc' ? 'qr' : 'nfc') as typeof mode
+
+  const startNfcScanning = async () => {
+    if (!!nfcReader) {
+      nfcReader
+        .scan()
+        .then(() => {
+          if (!!nfcReader) {
+            nfcReader.onreadingerror = () => {
+              // TODO: show some error message here
+            }
+
+            nfcReader.onreading = (event) => {
+              // TODO: maybe should check more than just the first record?
+              const record = event.message.records[0]
+              if (record.recordType === 'text') {
+                const decoder = new TextDecoder(record.encoding)
+                const data = decoder.decode(record.data)
+                // TODO: should find a way to stop scanning and pass it to `onSuccess` here
+                handleData(data)
+              }
+            }
+          }
+        })
+        .catch(() => {
+          console.warn(`Error while trying to initiate NFC scanning.`)
+          isNfcEnabled = false
+          mode = 'qr'
+        })
+    }
+  }
 
   const createQrScanner = () => {
     if (!!videoElement) {
@@ -65,11 +98,15 @@
   }
 
   const handleQrScan = (result: QrScanner.ScanResult) => {
-    if (isAddress(result.data)) {
-      txRequest = { address: result.data }
-      stopQrScanner()
-    } else if (result.data.startsWith(appUrl)) {
-      const url = new URL(result.data)
+    handleData(result.data, stopQrScanner)
+  }
+
+  const handleData = (data: string, onSuccess?: () => void) => {
+    if (isAddress(data)) {
+      txRequest = { address: data }
+      onSuccess?.()
+    } else if (data.startsWith(appUrl)) {
+      const url = new URL(data)
       const address = url.searchParams.get('address')
 
       if (!!address && isAddress(address)) {
@@ -78,7 +115,7 @@
         const amount = !!_amount ? parseFloat(_amount) : undefined
 
         txRequest = { address, name, amount }
-        stopQrScanner()
+        onSuccess?.()
       }
     } else {
       // TODO: display some sort of error message
@@ -114,7 +151,7 @@
   }
 
   onMount(async () => {
-    isNfcEnabled = false
+    isNfcEnabled = 'NDEFReader' in window
     isQrEnabled = await QrScanner.hasCamera()
 
     if (!isNfcEnabled && isQrEnabled) {
@@ -126,8 +163,6 @@
     qrScanner?.destroy()
   })
 </script>
-
-<!-- TODO: add nfc tap functionality (use nfc first if device is compatible) -->
 
 <section id="send-view">
   <Navbar isSettingsDisabled={isSendingTx} />
