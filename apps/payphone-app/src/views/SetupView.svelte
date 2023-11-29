@@ -12,6 +12,7 @@
   import { AppView } from '../types'
   import EntropyCanvas from '../lib/EntropyCanvas.svelte'
   import { getAlchemyProvider } from '@payphone-client-monorepo/utilities'
+  import Icon from '../lib/Icon.svelte'
 
   const setupSteps: string[] = ['Install PayPhone', 'Create Wallet']
   const drawingPrompt = setupDrawingPrompts[Math.floor(Math.random() * setupDrawingPrompts.length)]
@@ -24,7 +25,7 @@
 
   $: isInstallButtonEnabled = !$isAppInstalled && !!$beforeAppInstallPromptEvent
   $: $isAppInstalled && currentStepId === 0 && currentStepId++
-  $: $isAppInstalled && $walletAddress && appView.set(AppView.wallet)
+  $: $isAppInstalled && $walletAddress && appView.set(AppView.naming)
 
   $: isSufficientEntropy = checkEntropy(canvasEntropy)
 
@@ -65,6 +66,7 @@
 </script>
 
 <section id="setup-view">
+  <Icon />
   <div class="setup-header">
     <h1>Set up your digital wallet</h1>
     <ol>
@@ -107,8 +109,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     height: 100%;
+    width: 100%;
     gap: 2.5em;
   }
 
@@ -133,6 +135,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    margin-top: auto;
   }
 
   .install-info {

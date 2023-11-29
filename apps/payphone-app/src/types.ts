@@ -4,6 +4,7 @@
 export enum AppView {
   'loading' = 'loading',
   'setup' = 'setup',
+  'naming' = 'naming',
   'wallet' = 'wallet',
   'send' = 'send',
   'receive' = 'receive'

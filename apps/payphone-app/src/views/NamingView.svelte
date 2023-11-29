@@ -1,0 +1,59 @@
+<script lang="ts">
+  import { appView, walletName } from '../stores'
+  import { AppView } from '../types'
+
+  let newName: string | undefined = undefined
+
+  // TODO: improve validity checks with regex
+  $: isValidNewName = !!newName?.trim() && !newName.includes('?') && !newName.includes('&')
+
+  const onSubmit = () => {
+    if (!!newName && isValidNewName) {
+      walletName.set(newName.trim())
+      appView.set(AppView.wallet)
+    }
+  }
+</script>
+
+<section id="naming-view">
+  <div class="header">
+    <h2>What should we call you?</h2>
+    <span>This is what others see when sending you money.</span>
+    <span>(you can change this later)</span>
+  </div>
+  <form on:submit|preventDefault={onSubmit}>
+    <input type="text" bind:value={newName} placeholder="John Smith" />
+    <button type="submit" disabled={!isValidNewName}>Set Name</button>
+  </form>
+</section>
+
+<style>
+  #naming-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+    gap: 2em;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+    width: 75%;
+  }
+
+  form > input {
+    width: 100%;
+    padding: 0.5em;
+    font-size: 1.25em;
+    font-weight: 600;
+  }
+</style>

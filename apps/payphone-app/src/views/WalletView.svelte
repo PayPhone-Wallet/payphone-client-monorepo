@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { appView, walletBalance } from '../stores'
+  import { appView, walletAddress, walletBalance, walletName } from '../stores'
   import { formatPayTokenAmount } from '@payphone-client-monorepo/utilities'
   import { appChainId } from '../config'
   import { AppView } from '../types'
-  import EditableWalletName from '../lib/EditableWalletName.svelte'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })
+
+  $: fallbackWalletName = `User ${$walletAddress?.slice(2, 6) ?? '?'}`
 
   const onClickSend = () => {
     appView.set(AppView.send)
@@ -23,7 +24,7 @@
 <section id="wallet-view">
   <div class="header">
     <h1>${prettifiedWalletBalance}</h1>
-    <EditableWalletName />
+    <span>{$walletName ?? fallbackWalletName}</span>
   </div>
   <div class="buttons">
     <button on:click={onClickSend} disabled={!$walletBalance}>Send</button>
