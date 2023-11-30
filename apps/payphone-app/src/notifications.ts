@@ -4,7 +4,8 @@ export const notify = (title: string, body: string) => {
       navigator.serviceWorker.ready.then((registration) => {
         registration.showNotification(title, {
           body,
-          icon: "/icon_192_maskable.png"
+          icon: "/icon_192_maskable.png",
+          badge: "/icon_192_maskable.png"
         });
       });
     } else {
