@@ -107,7 +107,7 @@
 
       await updateWalletBalance()
 
-      notify(`💸 Sent $${prettifiedTxAmount} to ${txRecipient}!`);
+      notify("Money Sent!", `💸 Sent $${prettifiedTxAmount} to ${txRecipient}!`);
 
       appView.set(AppView.wallet)
 

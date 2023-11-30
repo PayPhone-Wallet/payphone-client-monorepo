@@ -5,7 +5,7 @@
   import { AppView } from '../types'
   import Navbar from '../lib/Navbar.svelte'
   import { onMount } from 'svelte'
-  import { notify, requestNotificationPermission } from '../notifications'
+  import { requestNotificationPermission } from '../notifications'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {

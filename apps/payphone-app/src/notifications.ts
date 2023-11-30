@@ -1,10 +1,18 @@
-export const notify = (message: string) => {
-  if (hasNotificationPermission()) {
-    const notification = new Notification(message);
-    return notification;
-  } else {
-    alert(message);
-    return null;
+export const notify = (title: string, body: string) => {
+  try {
+    if (hasNotificationPermission()) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(title, {
+          body,
+          icon: "/icon_192_maskable.png"
+        });
+      });
+    } else {
+      alert(`${title}: ${body}`);
+      return null;
+    }
+  } catch(err) {
+    alert((err as any)?.message ?? err);
   }
 };
 
