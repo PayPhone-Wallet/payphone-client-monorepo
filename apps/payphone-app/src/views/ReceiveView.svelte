@@ -52,7 +52,7 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
           });
-          await notify(`🤑 Received $${prettifiedAmount}!`);
+          notify(`🤑 Received $${prettifiedAmount}!`);
         }
       } catch (err) {
         console.error(err);

@@ -5,7 +5,7 @@
   import { AppView } from '../types'
   import Navbar from '../lib/Navbar.svelte'
   import { onMount } from 'svelte'
-  import { requestNotificationPermission } from '../notifications'
+  import { notify, requestNotificationPermission } from '../notifications'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {
@@ -22,7 +22,9 @@
   }
 
   onMount(() => {
-    requestNotificationPermission().catch(console.error);
+    requestNotificationPermission().then(() => {
+      notify("Test notification!");
+    }).catch(console.error);
   });
 </script>
 
