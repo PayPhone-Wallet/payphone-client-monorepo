@@ -12,6 +12,7 @@
   import { AppView } from '../types'
   import { updateWalletBalance } from '../utils'
   import Navbar from '../lib/Navbar.svelte'
+  import { notify } from '../notifications'
 
   let mode: 'qr' | 'nfc' = 'nfc'
   let isNfcEnabled = false
@@ -106,7 +107,8 @@
 
       await updateWalletBalance()
 
-      // TODO: show some "success" or "fail" screen
+      await notify(`💸 Sent $${prettifiedTxAmount} to ${txRecipient}!`);
+
       appView.set(AppView.wallet)
 
       isSendingTx = false

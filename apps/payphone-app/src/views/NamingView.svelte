@@ -13,6 +13,10 @@
       appView.set(AppView.wallet)
     }
   }
+
+  const onClickBack = () => {
+    appView.set(AppView.wallet)
+  }
 </script>
 
 <section id="naming-view">
@@ -23,7 +27,10 @@
   </div>
   <form on:submit|preventDefault={onSubmit}>
     <input type="text" bind:value={newName} placeholder="John Smith" />
-    <button type="submit" disabled={!isValidNewName}>Set Name</button>
+    <div class="form-buttons">
+      <button on:click={onClickBack}><i class="icofont-arrow-left" /> Back</button>
+      <button type="submit" disabled={!isValidNewName}>Set Name</button>
+    </div>
   </form>
 </section>
 
@@ -55,5 +62,10 @@
     padding: 0.5rem;
     font-size: 1.25rem;
     font-weight: 600;
+  }
+
+  .form-buttons {
+    display: flex;
+    gap: 1rem;
   }
 </style>

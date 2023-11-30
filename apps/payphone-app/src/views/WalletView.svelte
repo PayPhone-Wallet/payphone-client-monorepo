@@ -4,6 +4,8 @@
   import { appChainId } from '../config'
   import { AppView } from '../types'
   import Navbar from '../lib/Navbar.svelte'
+  import { onMount } from 'svelte'
+  import { requestNotificationPermission } from '../notifications'
 
   $: formattedWalletBalance = formatPayTokenAmount(appChainId, $walletBalance ?? 0n)
   $: prettifiedWalletBalance = formattedWalletBalance.toLocaleString(undefined, {
@@ -18,6 +20,10 @@
   const onClickReceive = () => {
     appView.set(AppView.receive)
   }
+
+  onMount(() => {
+    requestNotificationPermission().catch(console.error);
+  });
 </script>
 
 <section id="wallet-view">
@@ -55,7 +61,7 @@
   }
 
   .header > span {
-    font-size: 1.9rem;
+    font-size: 2.4rem;
     font-weight: 700;
   }
 
