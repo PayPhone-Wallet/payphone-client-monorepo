@@ -22,9 +22,7 @@
   }
 
   onMount(() => {
-    requestNotificationPermission().then(() => {
-      notify("Test notification!");
-    }).catch(console.error);
+    requestNotificationPermission().catch(console.error);
   });
 </script>
 
